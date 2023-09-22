@@ -370,10 +370,16 @@ h6 {
 /* end of room  */
 /* single room*/
 
+.singleRoomOverflow{
+  overflow-x: hidden;
+}
 .single-room {
   padding: 5rem 0 0 0;
+
 }
 .single-room-images {
+  overflow-x: hidden;
+
   width: 80vw;
   margin: 0 auto;
   display: grid;
@@ -382,7 +388,7 @@ h6 {
   grid-column-gap: 50px;
 }
 .single-room-images img {
-  width: 100%;
+  width: 90%;
   display: block;
 }
 .single-room-info {
@@ -425,6 +431,8 @@ h6 {
   grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
   grid-column-gap: 2rem;
   grid-row-gap: 1rem;
+  width: 100%;
+  overflow: hidden;
 }
 @media screen and (min-width: 992px) {
   .single-room-images,

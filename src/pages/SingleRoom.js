@@ -41,7 +41,7 @@ export const SingleRoom = () => {
   const [mainImg, ...defaultImg] = images;
 
   return (
-    <>
+    <div className="singleRoomOverflow">
       <StyledHero img={mainImg || defaultBcg}>
         <Banner title={`${name} room`}>
           <Link to="/rooms" className="btn-primary">
@@ -81,6 +81,6 @@ export const SingleRoom = () => {
           })}
         </ul>
       </section>
-    </>
+    </div>
   );
 };
