@@ -43,7 +43,7 @@ export const SingleRoom = () => {
   return (
     <div className="singleRoomOverflow">
       <StyledHero img={mainImg || defaultBcg}>
-        <Banner title={`${name} room`}>
+        <Banner title={`${name}`}>
           <Link to="/rooms" className="btn-primary">
             Voltar aos quartos
           </Link>

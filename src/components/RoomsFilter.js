@@ -31,11 +31,16 @@ export default function RoomsFilter({ rooms }) {
   types = types.map((item, index) => {
     return (
       <option value={item} key={index}>
-        {item}
+        {item === "all" && "Todos"}
+        {item === "presidential" && "Presidencial"}
+        {item === "family" && "Família"}
+        {item === "double" && "Casal"}
+        {item === "single" && "Solteiro"}
       </option>
     );
   });
-  let people = getUnique(rooms, "capacity");
+  let people = getUnique(rooms, "capacity").sort();
+  people = people.sort((a, b) => a - b);
   people = people.map((item, index) => {
     return (
       <option key={index} value={item}>
@@ -80,6 +85,7 @@ export default function RoomsFilter({ rooms }) {
           <div className="form-group">
             <label htmlFor="price">Preço R${price},00</label>
             <input
+              style={{ cursor: 'pointer' }}
               type="range"
               name="price"
               min={minPrice}
@@ -95,16 +101,18 @@ export default function RoomsFilter({ rooms }) {
           <div className="form-group">
             <div className="single-extra">
               <input
+                style={{ cursor: 'pointer' }}
                 type="checkbox"
                 name="breakfast"
                 id="breakfast"
                 checked={breakfast}
                 onChange={handleChange}
               />
-              <label htmlFor="breakfast">breakfast</label>
+              <label htmlFor="breakfast">Café da manhã</label>
             </div>
             <div className="single-extra">
               <input
+                style={{ cursor: 'pointer' }}
                 type="checkbox"
                 name="pets"
                 id="pets"
