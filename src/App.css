@@ -53,14 +53,13 @@ h6 {
   margin-bottom: 1.5em;
 }
 
-.logoHotel{
+.logoHotel {
   color: black;
   text-decoration: none;
   font-weight: bold;
   display: flex;
   justify-content: center;
   align-items: center;
-  
 }
 .btn-primary {
   display: inline-block;
@@ -369,12 +368,11 @@ h6 {
 /* end of room  */
 /* single room*/
 
-.singleRoomOverflow{
+.singleRoomOverflow {
   overflow-x: hidden;
 }
 .single-room {
   padding: 5rem 0 0 0;
-
 }
 .single-room-images {
   overflow-x: hidden;
@@ -527,3 +525,44 @@ h6 {
   }
 }
 /* end of rooms fitler*/
+/* date div */
+.date-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.date-div label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+
+.date-div button {
+  background-color: #007bff;
+  color: #fff; 
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.date-div button:hover {
+  background-color: #0056b3; /* Cor de fundo ao passar o mouse */
+}
+
+@media screen and (min-width: 776px) {
+  .date-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    
+  }
+}

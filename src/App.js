@@ -6,6 +6,8 @@ import { Error } from "./pages/Error";
 import { Navbar } from "./components/Navbar";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const location = useLocation();
@@ -22,6 +24,7 @@ function App() {
         <Route path="/rooms/:slug" element={<SingleRoom />} />
         <Route path="*" element={<Error />} />
       </Routes>
+      <ToastContainer />
     </>
   );
 }
