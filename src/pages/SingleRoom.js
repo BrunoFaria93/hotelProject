@@ -100,13 +100,13 @@ export const SingleRoom = () => {
   };
 
   const reservation = async () => {
-    setIsLoading(true)
     var campos = "";
     if (startDate === null || endDate === null) {
+      setIsLoading(false);
       toast.error(
         "Por favor, insira as datas de entrada e saída para continuar"
       );
-      setIsLoading(false)
+
       return;
     }
 
@@ -119,19 +119,19 @@ export const SingleRoom = () => {
       toast.error(
         "Por favor, insira as datas de entrada e saída de forma correta"
       );
-      setIsLoading(false)
+      setIsLoading(false);
       return;
     } else {
+      setIsLoading(true);
       var flag = false;
       async function checkDates() {
         flag = await fetchData2();
         if (flag) {
+          setIsLoading(false);
           toast.error("Data indisponível");
 
           return;
         } else {
-          setIsLoading(true);
-
           campos = [startDate.toString(), endDate.toString()];
 
           let response = await Client.getEntries({
@@ -372,7 +372,6 @@ export const SingleRoom = () => {
     return diferencaEmDias;
   }
 
-
   return (
     <div className="singleRoomOverflow">
       <StyledHero img={mainImg || defaultBcg}>
@@ -415,7 +414,6 @@ export const SingleRoom = () => {
           />
           {isLoading ? (
             <div className="loading-btn">Loading&#8230;</div>
-
           ) : (
             <button onClick={() => reservation()}>Reservar</button>
           )}
