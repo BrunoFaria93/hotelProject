@@ -556,6 +556,10 @@ h6 {
 }
 
 @media screen and (min-width: 776px) {
+  .date-div button {
+    margin-top: 0rem;
+  }
+
   .date-div {
     display: flex;
     flex-direction: row;
