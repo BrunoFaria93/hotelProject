@@ -107,6 +107,18 @@ export const SingleRoom = () => {
         "Por favor, insira as datas de entrada e saída para continuar"
       );
       return;
+    }
+
+    if (
+      startDate.toISOString().split("T")[0] ===
+        endDate.toISOString().split("T")[0] ||
+      startDate.toISOString().split("T")[0] >
+        endDate.toISOString().split("T")[0]
+    ) {
+      toast.error(
+        "Por favor, insira as datas de entrada e saída de forma correta"
+      );
+      return;
     } else {
       var flag = false;
       async function checkDates() {
@@ -154,7 +166,7 @@ export const SingleRoom = () => {
                 ];
                 entry.fields.reservations["en-US"] = updatedReservations;
               }
-              return entry.update();
+              // return entry.update();
             })
             .then((updatedEntry) => {
               toast.success("Registrado com sucesso.");
@@ -232,7 +244,7 @@ export const SingleRoom = () => {
   async function fetchData2() {
     return new Promise(async (resolve, reject) => {
       const datasEntre2 = obterDatasEntre(startDate, endDate);
-  
+
       let response = await Client.getEntries({
         content_type: "hotelRoom",
         order: "sys.createdAt",
@@ -243,13 +255,13 @@ export const SingleRoom = () => {
           entryId = response.items[i].sys.id;
         }
       }
-  
+
       const { createClient } = require("contentful-management");
-  
+
       const client = createClient({
         accessToken: admin,
       });
-  
+
       client
         .getSpace(cSpace)
         .then((space) => space.getEnvironment("master"))
@@ -269,7 +281,7 @@ export const SingleRoom = () => {
               dataObj.getMonth() + 1
             ).padStart(2, "0")}-${String(dataObj.getDate()).padStart(2, "0")}`;
           });
-  
+
           function verificaConflito(datas1, datas2) {
             for (const data of datas1) {
               if (datas2.includes(data)) {
@@ -279,7 +291,7 @@ export const SingleRoom = () => {
             }
             resolve(false);
           }
-  
+
           if (verificaConflito(datasFormatadas, datasEntre2)) {
             resolve(true);
           } else {
@@ -292,8 +304,6 @@ export const SingleRoom = () => {
         });
     });
   }
-  
-
 
   const isDateDisabled = (date) => {
     const formattedDate = date.toISOString().split("T")[0];
