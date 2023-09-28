@@ -166,7 +166,7 @@ export const SingleRoom = () => {
                 ];
                 entry.fields.reservations["en-US"] = updatedReservations;
               }
-              // return entry.update();
+              return entry.update();
             })
             .then((updatedEntry) => {
               toast.success("Registrado com sucesso.");
