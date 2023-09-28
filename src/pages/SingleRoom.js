@@ -8,7 +8,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Client from "../Contentful";
 import { toast } from "react-toastify";
-
 export const SingleRoom = () => {
   const cSpace = process.env.REACT_APP_CONTENTFUL_SPACE;
   const admin = process.env.REACT_APP_CONTENTFUL_ADMIN;
@@ -16,7 +15,7 @@ export const SingleRoom = () => {
   const { getRoom } = useContext(RoomContext);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-
+  const [isLoading, setIsLoading] = useState(false);
   const [disabledDate, setDisabledDate] = useState([]);
 
   const currentURL = window.location.href;
@@ -101,11 +100,13 @@ export const SingleRoom = () => {
   };
 
   const reservation = async () => {
+    setIsLoading(true)
     var campos = "";
     if (startDate === null || endDate === null) {
       toast.error(
         "Por favor, insira as datas de entrada e saída para continuar"
       );
+      setIsLoading(false)
       return;
     }
 
@@ -118,6 +119,7 @@ export const SingleRoom = () => {
       toast.error(
         "Por favor, insira as datas de entrada e saída de forma correta"
       );
+      setIsLoading(false)
       return;
     } else {
       var flag = false;
@@ -128,6 +130,8 @@ export const SingleRoom = () => {
 
           return;
         } else {
+          setIsLoading(true);
+
           campos = [startDate.toString(), endDate.toString()];
 
           let response = await Client.getEntries({
@@ -166,10 +170,12 @@ export const SingleRoom = () => {
                 ];
                 entry.fields.reservations["en-US"] = updatedReservations;
               }
+
               return entry.update();
             })
             .then((updatedEntry) => {
               toast.success("Registrado com sucesso.");
+              setIsLoading(false);
               // console.log("Entrada atualizada com sucesso:", updatedEntry);
             })
             .catch((error) => {
@@ -366,6 +372,7 @@ export const SingleRoom = () => {
     return diferencaEmDias;
   }
 
+
   return (
     <div className="singleRoomOverflow">
       <StyledHero img={mainImg || defaultBcg}>
@@ -406,7 +413,12 @@ export const SingleRoom = () => {
               )
             }
           />
-          <button onClick={() => reservation()}>Reservar</button>
+          {isLoading ? (
+            <div className="loading-btn">Loading&#8230;</div>
+
+          ) : (
+            <button onClick={() => reservation()}>Reservar</button>
+          )}
           {/* <button onClick={() => fetchData2()}>Reservar</button> */}
         </div>
 
