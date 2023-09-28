@@ -51,7 +51,11 @@ export const SingleRoom = () => {
         .then((environment) => environment.getEntry(entryId))
         .then((entry) => {
           let dateArray = [];
-          for (let i = 0; i < Object.keys(entry.fields.reservations["en-US"]).length;i++) {
+          for (
+            let i = 0;
+            i < Object.keys(entry.fields.reservations["en-US"]).length;
+            i++
+          ) {
             dateArray.push(entry.fields.reservations["en-US"][i]);
           }
           setDisabledDate(dateArray);
@@ -99,66 +103,258 @@ export const SingleRoom = () => {
   const reservation = async () => {
     var campos = "";
     if (startDate === null || endDate === null) {
-      toast.error("Por favor, insira as datas de entrada e saída para continuar");
+      toast.error(
+        "Por favor, insira as datas de entrada e saída para continuar"
+      );
       return;
     } else {
-      campos = [startDate.toString(), endDate.toString()];
+      var flag = false;
+      async function checkDates() {
+        flag = await fetchData2();
+        if (flag) {
+          toast.error("Data indisponível");
 
+          return;
+        } else {
+          campos = [startDate.toString(), endDate.toString()];
+
+          let response = await Client.getEntries({
+            content_type: "hotelRoom",
+            order: "sys.createdAt",
+          });
+
+          let entryId = "";
+          for (let i = 0; i < response.items.length; i++) {
+            if (response.items[i].fields.slug === slug) {
+              entryId = response.items[i].sys.id;
+            }
+          }
+
+          const newReservationsValue = campos;
+
+          const { createClient } = require("contentful-management");
+
+          const client = createClient({
+            accessToken: admin,
+          });
+
+          client
+            .getSpace(cSpace)
+            .then((space) => space.getEnvironment("master"))
+            .then((environment) => environment.getEntry(entryId))
+            .then((entry) => {
+              if (entry.fields.reservations === undefined) {
+                entry.fields.reservations = {
+                  "en-US": newReservationsValue,
+                };
+              } else {
+                const updatedReservations = [
+                  ...entry.fields.reservations["en-US"],
+                  ...newReservationsValue,
+                ];
+                entry.fields.reservations["en-US"] = updatedReservations;
+              }
+              return entry.update();
+            })
+            .then((updatedEntry) => {
+              toast.success("Registrado com sucesso.");
+              // console.log("Entrada atualizada com sucesso:", updatedEntry);
+            })
+            .catch((error) => {
+              console.error("Erro ao atualizar a entrada:", error);
+            });
+        }
+      }
+
+      checkDates();
+    }
+  };
+
+  // async function fetchData2() {
+  //   const datasEntre2 = obterDatasEntre(startDate, endDate);
+
+  //   let response = await Client.getEntries({
+  //     content_type: "hotelRoom",
+  //     order: "sys.createdAt",
+  //   });
+  //   let entryId = "";
+  //   for (let i = 0; i < response.items.length; i++) {
+  //     if (response.items[i].fields.slug === slug) {
+  //       entryId = response.items[i].sys.id;
+  //     }
+  //   }
+
+  //   const { createClient } = require("contentful-management");
+
+  //   const client = createClient({
+  //     accessToken: admin,
+  //   });
+
+  //   client
+  //     .getSpace(cSpace)
+  //     .then((space) => space.getEnvironment("master"))
+  //     .then((environment) => environment.getEntry(entryId))
+  //     .then((entry) => {
+  //       let dateArray = [];
+  //       for (
+  //         let i = 0;
+  //         i < Object.keys(entry.fields.reservations["en-US"]).length;
+  //         i++
+  //       ) {
+  //         dateArray.push(entry.fields.reservations["en-US"][i]);
+  //       }
+  //       const datasFormatadas = dateArray.map((data) => {
+  //         const dataObj = new Date(data);
+  //         return `${dataObj.getFullYear()}-${String(
+  //           dataObj.getMonth() + 1
+  //         ).padStart(2, "0")}-${String(dataObj.getDate()).padStart(2, "0")}`;
+  //       });
+
+  //       async function verificaConflito(datas1, datas2) {
+  //         for (const data of datas1) {
+  //           if (await datas2.includes(data)) {
+  //             toast.error("Data indisponível");
+  //             return true;
+  //           }
+  //         }
+  //         return false;
+  //       }
+  //       if (verificaConflito(datasFormatadas, datasEntre2)) {
+  //         console.log("deu conflito no fetchdate2");
+  //         return true;
+  //       } else {
+  //         console.log("nao deu conflito no fetchdate2");
+  //         return false;
+  //       }
+  //     });
+  // }
+
+  async function fetchData2() {
+    return new Promise(async (resolve, reject) => {
+      const datasEntre2 = obterDatasEntre(startDate, endDate);
+  
       let response = await Client.getEntries({
         content_type: "hotelRoom",
         order: "sys.createdAt",
       });
-
       let entryId = "";
       for (let i = 0; i < response.items.length; i++) {
         if (response.items[i].fields.slug === slug) {
           entryId = response.items[i].sys.id;
         }
       }
-
-      const newReservationsValue = campos;
-
+  
       const { createClient } = require("contentful-management");
-
+  
       const client = createClient({
         accessToken: admin,
       });
-
+  
       client
         .getSpace(cSpace)
         .then((space) => space.getEnvironment("master"))
         .then((environment) => environment.getEntry(entryId))
         .then((entry) => {
-          if (entry.fields.reservations === undefined) {
-            entry.fields.reservations = {
-              "en-US": newReservationsValue,
-            };
-          } else {
-            const updatedReservations = [
-              ...entry.fields.reservations["en-US"],
-              ...newReservationsValue,
-            ];
-            entry.fields.reservations["en-US"] = updatedReservations;
+          let dateArray = [];
+          for (
+            let i = 0;
+            i < Object.keys(entry.fields.reservations["en-US"]).length;
+            i++
+          ) {
+            dateArray.push(entry.fields.reservations["en-US"][i]);
           }
-          return entry.update();
-        })
-        .then((updatedEntry) => {
-          toast.success("Registrado com sucesso.");
-          // console.log("Entrada atualizada com sucesso:", updatedEntry);
+          const datasFormatadas = dateArray.map((data) => {
+            const dataObj = new Date(data);
+            return `${dataObj.getFullYear()}-${String(
+              dataObj.getMonth() + 1
+            ).padStart(2, "0")}-${String(dataObj.getDate()).padStart(2, "0")}`;
+          });
+  
+          function verificaConflito(datas1, datas2) {
+            for (const data of datas1) {
+              if (datas2.includes(data)) {
+                resolve(true);
+                return;
+              }
+            }
+            resolve(false);
+          }
+  
+          if (verificaConflito(datasFormatadas, datasEntre2)) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
         })
         .catch((error) => {
-          console.error("Erro ao atualizar a entrada:", error);
+          console.error("Erro em fetchData2:", error);
+          reject(error);
         });
-    }
-  };
+    });
+  }
+  
+
 
   const isDateDisabled = (date) => {
     const formattedDate = date.toISOString().split("T")[0];
     const arrayData = disabledDate.map(
       (objeto) => new Date(objeto.toString()).toISOString().split("T")[0]
     );
-    return !arrayData.includes(formattedDate);
+
+    const chunkSize = 2;
+    const dividedArray = divideArray(arrayData, chunkSize);
+
+    for (const [dataInicio, dataFim] of dividedArray) {
+      const diferencaDias = calculateDayDifference(dataInicio, dataFim);
+      if (diferencaDias === 1) {
+        if (dataInicio === formattedDate || dataFim === formattedDate) {
+          return false; // Ambas as datas estão desabilitadas
+        }
+      } else {
+        // const contentfulData = fetchData()
+
+        // console.log("contentfulData: ", contentfulData)
+        const datasEntre = obterDatasEntre(dataInicio, dataFim);
+        const datasEntre2 = obterDatasEntre(startDate, endDate);
+        if (datasEntre.includes(formattedDate)) {
+          return false; // A data está desabilitada
+        }
+      }
+    }
+
+    return true; // A data não está desabilitada
   };
+
+  function obterDatasEntre(dataInicio, dataFim) {
+    const datas = [];
+    const dataAtual = new Date(dataInicio);
+    const dataFimTimestamp = new Date(dataFim).getTime();
+
+    while (dataAtual <= dataFimTimestamp) {
+      datas.push(new Date(dataAtual).toISOString().split("T")[0]);
+      dataAtual.setDate(dataAtual.getDate() + 1);
+    }
+
+    return datas;
+  }
+
+  function divideArray(array, chunkSize) {
+    const chunkedArray = [];
+    for (let i = 0; i < array.length; i += chunkSize) {
+      chunkedArray.push(array.slice(i, i + chunkSize));
+    }
+    return chunkedArray;
+  }
+
+  function calculateDayDifference(data1, data2) {
+    const umDiaEmMilissegundos = 24 * 60 * 60 * 1000; // 1 dia em milissegundos
+    const data1Timestamp = new Date(data1).getTime();
+    const data2Timestamp = new Date(data2).getTime();
+    const diferencaEmDias = Math.abs(
+      (data2Timestamp - data1Timestamp) / umDiaEmMilissegundos
+    );
+    return diferencaEmDias;
+  }
 
   return (
     <div className="singleRoomOverflow">
@@ -201,6 +397,7 @@ export const SingleRoom = () => {
             }
           />
           <button onClick={() => reservation()}>Reservar</button>
+          {/* <button onClick={() => fetchData2()}>Reservar</button> */}
         </div>
 
         <div className="single-room-images">
