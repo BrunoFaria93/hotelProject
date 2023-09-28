@@ -50,6 +50,10 @@ export const SingleRoom = () => {
         .then((environment) => environment.getEntry(entryId))
         .then((entry) => {
           let dateArray = [];
+  
+          if(entry.fields.reservations === undefined){
+            return
+          }
           for (
             let i = 0;
             i < Object.keys(entry.fields.reservations["en-US"]).length;
@@ -274,6 +278,9 @@ export const SingleRoom = () => {
         .then((environment) => environment.getEntry(entryId))
         .then((entry) => {
           let dateArray = [];
+          if(entry.fields.reservations === undefined){
+            entry.fields.reservations = entry.fields.reservations["en-US"]
+          }
           for (
             let i = 0;
             i < Object.keys(entry.fields.reservations["en-US"]).length;
