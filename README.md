@@ -25,6 +25,7 @@ Para usar o "Hotel Project", siga estas etapas:
 ## Tecnologias Utilizadas
 
 - React: A interface do usuário do site é construída com React, uma biblioteca JavaScript de código aberto.
+- Contentful (Banco)
 
 
 
